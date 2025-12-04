@@ -4,6 +4,8 @@ import InputTodo from './components/InputTodo'
 import TodoItems from './components/TodoItems'
 import Statistics from './components/Statistics'
 import ClearTodos from './components/ClearTodos'
+import ConfirmationModal from './components/ConfirmationModal'
+import { AnimatePresence } from 'framer-motion'
 
 const App = () => {
   const [ todo, setTodo ] = useState("");
@@ -14,6 +16,7 @@ const App = () => {
   const [ editingId, setEditingId ] = useState(null)
   const [ editingText, setEditingText ] =  useState("");
   const [ filter, setFilter ] = useState("all");
+  const [ open, setOpen ] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
@@ -80,12 +83,22 @@ const App = () => {
   }
 
   const clearActive = () => {
-    setTodos(prev => prev.filter(t = t.completed))
+    setTodos(prev => prev.filter(t => t.completed))
+  }
+
+  const openAll = () => {
+    setOpen(true)
+  }
+
+  const closeAll = () => {
+    setOpen(false)
   }
 
   const clearAll = () => {
-    
+    setTodos([]);
+    setOpen(false);
   }
+
 
   return (
     <div className='mx-auto min-h-screen m-4 px-8 lg:px-48'>
@@ -116,8 +129,15 @@ const App = () => {
       />
 
       <ClearTodos 
-      
+        todos={todos}
+        clearAllTodos={openAll}
+        clearActiveTodos={clearActive}
+        clearCompletedTodos={clearCompleted}
       />
+      <AnimatePresence>
+        {open &&  <ConfirmationModal onClearAll={clearAll} onCancel={closeAll}/>}
+      </AnimatePresence>
+      
     </div>
   )
 }
