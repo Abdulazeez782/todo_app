@@ -1,15 +1,24 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Header from './components/Header'
 import InputTodo from './components/InputTodo'
 import TodoItems from './components/TodoItems'
 import Statistics from './components/Statistics'
+import ClearTodos from './components/ClearTodos'
 
 const App = () => {
   const [ todo, setTodo ] = useState("");
-  const [ todos, setTodos ] = useState([]);
+  const [ todos, setTodos ] = useState(() => {
+    const savedTodos = localStorage.getItem("todos");
+    return savedTodos ? JSON.parse(savedTodos) : []
+  });
   const [ editingId, setEditingId ] = useState(null)
   const [ editingText, setEditingText ] =  useState("");
   const [ filter, setFilter ] = useState("all");
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos])
+  
 
   // adding items to the list
   const handleAddTodo = () => {
@@ -40,6 +49,7 @@ const App = () => {
     setEditingText("");
   }
 
+  // cancel editing process
   const onCancel = () => {
     setEditingId(null);
     setEditingText("")
@@ -64,6 +74,18 @@ const App = () => {
     {label: "Active", value: activeTodos},
     {label: "Completed", value: completedTodos}
   ]
+
+  const clearCompleted = () => {
+    setTodos(prev => prev.filter(t => !t.completed))
+  }
+
+  const clearActive = () => {
+    setTodos(prev => prev.filter(t = t.completed))
+  }
+
+  const clearAll = () => {
+    
+  }
 
   return (
     <div className='mx-auto min-h-screen m-4 px-8 lg:px-48'>
@@ -91,6 +113,10 @@ const App = () => {
 
       <Statistics 
         stats={stats}
+      />
+
+      <ClearTodos 
+      
       />
     </div>
   )

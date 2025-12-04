@@ -31,6 +31,12 @@ const TodoItems = ({
                                             value={editingText}
                                             onChange={(e) => setEditingText(e.target.value)}
                                             className="p-2 focus:outline-blue-300 border border-gray-200 w-full rounded-sm"
+                                            autoFocus
+                                            onKeyDown={(e) => {
+                                                if(e.key === "Enter") {
+                                                    onSave(todo.id);
+                                                }
+                                            }}
                                         />
                                         <div className="flex gap-2">
                                             <button
